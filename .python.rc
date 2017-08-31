@@ -1,0 +1,182 @@
+#set -x
+
+
+
+function __scope__ {
+
+	local _DBG_MSG_=${_DBG_MSG_- }
+	local _INF_MSG_=${_INF_MSG_-1}
+	
+	
+	
+	PYTHONBASE=$(dirname `readlink -f $BASH_SOURCE`)
+	
+	
+	
+	if [ $1 ]
+	then
+		PYTHONPROPERTYFILE=$1
+	else
+		PYTHONPROPERTYFILE=$PYTHONBASE/.python.property
+	fi
+	
+	if [ ! -r $PYTHONPROPERTYFILE ]
+	then
+		echo "error: python property file ( $PYTHONPROPERTYFILE ) can not read !"
+		return 1
+	fi
+	
+	#[ $_DBG_MSG_ ] && echo "debug: PYTHONPROPERTYFILE[$PYTHONPROPERTYFILE]"
+	#[ $_DBG_MSG_ ] && echo "debug: \$(readlink -f \$PYTHONPROPERTYFILE)[$(readlink -f $PYTHONPROPERTYFILE)]"
+	
+	PYTHONPROPERTYFILE=$(readlink -f $PYTHONPROPERTYFILE)
+	
+	
+	
+	local _OLD_LIB_=$PYTHONHOME/lib
+	local _OLD_BIN_=$PYTHONHOME/bin
+	
+	. $PYTHONPROPERTYFILE
+	
+	
+	
+	if [ ! $PYTHONHOME ]
+	then
+		PYTHONHOME=$PYTHONBASE/$(/bin/ls $PYTHONBASE | grep -e "python-[0-9]\+\.[0-9]\+\.[0-9]\+" | tail -n 1)
+	fi
+	
+	if [ ! -d $PYTHONHOME -o ! -x $PYTHONHOME ]
+	then
+		echo "error: PYTHONHOME ( $PYTHONHOME ) is invalid !"
+		return 1
+	fi
+	
+	PYTHONHOME=$(readlink -f $PYTHONHOME)
+	
+	
+	
+	[ $_DBG_MSG_ ] && echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+	[ $_DBG_MSG_ ] && echo "           PATH: $PATH"
+	[ $_DBG_MSG_ ] && echo
+	
+	
+	
+	local _TOK_
+	
+	local _BUF_=""
+	local _NEW_LIB_=$PYTHONHOME/lib
+	
+	if [ $(expr "$_OLD_LIB_" : "\($PYTHONBASE\).*") ]
+	then
+		for _TOK_ in $(echo $LD_LIBRARY_PATH | tr ":" " ")
+		do
+			[ "$_OLD_LIB_" = "$_TOK_" ] && continue
+	
+			_BUF_="$_BUF_:$_TOK_"
+		done
+	else
+		_BUF_=${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+	fi
+	
+	if [ ! $(expr "$_BUF_" : ".*\($_NEW_LIB_\).*") ]
+	then
+		LD_LIBRARY_PATH=$_NEW_LIB_$_BUF_
+	else
+		LD_LIBRARY_PATH=$(expr "$_BUF_" : ":\(.*\)")
+	fi
+	
+	
+	
+	local _BUF_=""
+	local _NEW_BIN_=$PYTHONHOME/bin
+	
+	if [ $(expr "$_OLD_BIN_" : "\($PYTHONBASE\).*") ]
+	then
+		for _TOK_ in $(echo $PATH | tr ":" " ")
+		do
+			[ "$_OLD_BIN_" = "$_TOK_" ] && continue
+	
+			_BUF_="$_BUF_:$_TOK_"
+		done
+	else
+		_BUF_=${PATH:+:}$PATH
+	fi
+	
+	if [ ! $(expr "$PATH" : ".*\($_NEW_BIN_\).*") ]
+	then
+		PATH=$_NEW_BIN_$_BUF_
+	else
+		PATH=$(expr "$_BUF_" : ":\(.*\)")
+	fi
+	
+	
+	
+	#function _set_path() { # old/new in/out on/off
+	#
+	#	_BUF_=""
+	#	
+	#	if [ $(expr "$1" : "\($PYTHONBASE\).*") ]
+	#	then
+	#		for _TOK_ in $(echo $3 | tr ":" " ")
+	#		do
+	#			[ "$1" = "$_TOK_" ] && continue
+	#	
+	#			_BUF_="$_BUF_:$_TOK_"
+	#		done
+	#	else
+	#		_BUF_=${3:+:}$3
+	#	fi
+	#	
+	#	if [ ! $(expr "$3" : ".*\($2\).*") ]
+	#	then
+	#		eval $3=$2$_BUF_
+	#	else
+	#		eval $3=$(expr "$_BUF_" : ":\(.*\)")
+	#	fi
+	#}
+	#
+	#_set_path $_OLD_LIB_ $_NEW_LIB_ "LD_LIBRARY_PATH"
+	#_set_path $_OLD_BIN_ $_NEW_BIN_ "PATH"
+	
+	
+	
+	[ $_INF_MSG_ ] && echo "        PYTHONBASE: $PYTHONBASE"
+	[ $_INF_MSG_ ] && echo "PYTHONPROPERTYFILE: $PYTHONPROPERTYFILE"
+	[ $_INF_MSG_ ] && echo "        PYTHONHOME: $PYTHONHOME"
+	[ $_INF_MSG_ ] && echo "   LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+	[ $_INF_MSG_ ] && echo "              PATH: $PATH"
+	[ $_INF_MSG_ ] && echo
+	
+	
+	
+	function _set_alias() {
+	
+		alias $1 > /dev/null 2>&1; [ $? -eq 0 ] && unalias $1
+	
+		/bin/ls $PYTHONHOME/bin/$1* > /dev/null 2>&1
+	
+		if [ $? -eq 0 ]
+		then
+			alias "$1"="$PYTHONHOME/bin/$(basename `/bin/ls $PYTHONHOME/bin/$1* | head -n 1`)"
+			[ $_INF_MSG_ ] && alias $1
+		fi
+	}
+	
+	_set_alias "pip"
+	_set_alias "pydoc"
+	_set_alias "python"
+	_set_alias "pyvenv"
+	
+	[ $_INF_MSG_ ] && echo
+
+
+
+	export PATH LD_LIBRARY_PATH PYTHONHOME PYTHONPROPERTYFILE PYTHONBASE
+	
+	return 0
+}
+__scope__ $@; return $?
+
+
+
+
