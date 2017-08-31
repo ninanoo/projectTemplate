@@ -1,0 +1,83 @@
+#set -x
+
+
+
+function __scope__ {
+
+	local _DBG_MSG_=${_DBG_MSG_- }
+	local _INF_MSG_=${_INF_MSG_-1}
+	
+	
+	
+	local _RET_VAL_
+	
+	if [ $1 ]
+	then
+		if [ ! -r $1 ]
+		then
+			echo "error: include file ( $1 ) can not read !"
+			return 1
+		fi
+		. $@ ""; _RET_VAL_=$?
+	
+		if [ $_RET_VAL_ -ne 0 ]
+		then
+			echo "warning: return code ( $_RET_VAL_ ) of the include file ( $1 ) is not zero"
+		fi
+	fi
+	
+	
+	
+	PROJECTHOME=$(dirname `readlink -f $BASH_SOURCE`)
+	
+	
+	
+	[ $_DBG_MSG_ ] && echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+	[ $_DBG_MSG_ ] && echo "           PATH: $PATH"
+	[ $_DBG_MSG_ ] && echo
+	
+	
+	local _TOK_
+	
+	local _BUF_=""
+	local _LIB_=$PROJECTHOME/lib
+	
+	for _TOK_ in $(echo $LD_LIBRARY_PATH | tr ":" " ")
+	do
+		[ "$_LIB_" = "$_TOK_" ] && continue
+	
+		_BUF_="$_BUF_:$_TOK_"
+	done
+	LD_LIBRARY_PATH=$_LIB_$_BUF_
+	
+	
+	
+	local _BUF_=""
+	local _BIN_=$PROJECTHOME/bin
+	
+	for _TOK_ in $(echo $PATH | tr ":" " ")
+	do
+		[ "$_BIN_" = "$_TOK_" ] && continue
+	
+		_BUF_="$_BUF_:$_TOK_"
+	done
+	PATH=$_BIN_$_BUF_
+	
+	
+	
+	[ $_INF_MSG_ ] && echo "    PROJECTHOME: $PROJECTHOME"
+	[ $_INF_MSG_ ] && echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+	[ $_INF_MSG_ ] && echo "           PATH: $PATH"
+	[ $_INF_MSG_ ] && echo
+	
+	
+	
+	export PATH LD_LIBRARY_PATH PROJECTHOME
+	
+	return 0
+}
+__scope__ $@; return $?
+
+
+
+
