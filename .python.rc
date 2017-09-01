@@ -140,6 +140,24 @@ function __scope__ {
 	
 	
 	
+	function _gen_bin() {
+	
+		[ -h $PYTHONBASE/bin/$1 ] && rm $PYTHONBASE/bin/$1
+	
+		/bin/ls $PYTHONHOME/bin/$1* > /dev/null 2>&1
+	
+		if [ $? -eq 0 ]
+		then
+			ln -s $PYTHONHOME/bin/$(basename `/bin/ls $PYTHONHOME/bin/$1* | head -n 1`) $PYTHONBASE/bin/$1
+		fi
+	}
+	_gen_bin "pip"
+	_gen_bin "pydoc"
+	_gen_bin "python"
+	_gen_bin "pyvenv"
+
+
+
 	[ $_INF_MSG_ ] && echo "        PYTHONBASE: $PYTHONBASE"
 	[ $_INF_MSG_ ] && echo "PYTHONPROPERTYFILE: $PYTHONPROPERTYFILE"
 	[ $_INF_MSG_ ] && echo "        PYTHONHOME: $PYTHONHOME"
@@ -147,31 +165,9 @@ function __scope__ {
 	[ $_INF_MSG_ ] && echo "              PATH: $PATH"
 	[ $_INF_MSG_ ] && echo
 	
-	
-	
-	function _set_alias() {
-	
-		alias $1 > /dev/null 2>&1; [ $? -eq 0 ] && unalias $1
-	
-		/bin/ls $PYTHONHOME/bin/$1* > /dev/null 2>&1
-	
-		if [ $? -eq 0 ]
-		then
-			alias "$1"="$PYTHONHOME/bin/$(basename `/bin/ls $PYTHONHOME/bin/$1* | head -n 1`)"
-			[ $_INF_MSG_ ] && alias $1
-		fi
-	}
-	
-	_set_alias "pip"
-	_set_alias "pydoc"
-	_set_alias "python"
-	_set_alias "pyvenv"
-	
-	[ $_INF_MSG_ ] && echo
-
-
-
 	export PATH LD_LIBRARY_PATH PYTHONHOME PYTHONPROPERTYFILE PYTHONBASE
+	
+	
 	
 	return 0
 }

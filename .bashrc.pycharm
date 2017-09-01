@@ -11,27 +11,7 @@ fi
 
 umask 002
 
-
-
-_DBG_MSG_= _INF_MSG_= . ./prj/.project.rc ./prj/.python.rc ./prj/.python.property; [ $? -ne 0 ] && exit 1
-
-
-
-function _gen_bin() {
-
-	[ -h ./bin/$1 ] && rm ./bin/$1
-
-	/bin/ls $PYTHONHOME/bin/$1* > /dev/null 2>&1
-
-	if [ $? -eq 0 ]
-	then
-		ln -s $PYTHONHOME/bin/$(basename `/bin/ls $PYTHONHOME/bin/$1* | head -n 1`) ./bin/$1
-	fi
-}
-_gen_bin "pip"
-_gen_bin "pydoc"
-_gen_bin "python"
-_gen_bin "pyvenv"
+_DBG_MSG_= _INF_MSG_= . ./prj/.project.rc ./prj/.python.rc ./prj/.python.property
 
 
 
