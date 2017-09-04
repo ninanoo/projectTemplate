@@ -9,8 +9,6 @@ function __scope__ {
 	
 	
 	
-	local _RET_VAL_
-	
 	if [ $1 ]
 	then
 		if [ ! -r $1 ]
@@ -18,12 +16,7 @@ function __scope__ {
 			echo "error: include file ( $1 ) can not read !"
 			return 1
 		fi
-		. $@ ""; _RET_VAL_=$?
-	
-		if [ $_RET_VAL_ -ne 0 ]
-		then
-			echo "warning: return code ( $_RET_VAL_ ) of the include file ( $1 ) is not zero"
-		fi
+		. $@ ""
 	fi
 	
 	
@@ -37,34 +30,50 @@ function __scope__ {
 	[ $_DBG_MSG_ ] && echo
 	
 	
-	local _TOK_
-	
-	local _BUF_=""
-	local _LIB_=$PROJECTHOME/lib
-	
-	for _TOK_ in $(echo $LD_LIBRARY_PATH | tr ":" " ")
+
+	local IFS=$'\n'
+
+	local _FILE_
+	local _LINE_
+
+	cd $PROJECTHOME
+
+	for _FILE_ in $(
+			  ls -1 $(find $PROJECTHOME -regextype posix-egrep -regex ".*/.project.path.lib(.[0-9]+)?") \
+			| sed -e 's/\.project\.path\.lib/\*/' \
+			| sort -nt '*' -k2 \
+			| sed -e 's/\*/.project.path.lib/'
+		)
 	do
-		[ "$_LIB_" = "$_TOK_" ] && continue
-	
-		_BUF_="$_BUF_:$_TOK_"
+		cd $(dirname $_FILE_)
+		
+		for _LINE_ in $(cat $_FILE_)
+		do
+			LD_LIBRARY_PATH=$(readlink -f $_LINE_)${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+		done
 	done
-	LD_LIBRARY_PATH=$_LIB_$_BUF_
-	
-	
-	
-	local _BUF_=""
-	local _BIN_=$PROJECTHOME/bin
-	
-	for _TOK_ in $(echo $PATH | tr ":" " ")
+
+	cd $PROJECTHOME
+
+	for _FILE_ in $(
+			  ls -1 $(find $PROJECTHOME -regextype posix-egrep -regex ".*/.project.path.bin(.[0-9]+)?") \
+			| sed -e 's/\.project\.path\.bin/\*/' \
+			| sort -nt '*' -k2 \
+			| sed -e 's/\*/.project.path.bin/'
+		)
 	do
-		[ "$_BIN_" = "$_TOK_" ] && continue
-	
-		_BUF_="$_BUF_:$_TOK_"
+		cd $(dirname $_FILE_)
+		
+		for _LINE_ in $(cat $_FILE_)
+		do
+			PATH=$(readlink -f $_LINE_)${PATH:+:}$PATH
+		done
 	done
-	PATH=$_BIN_$_BUF_
-	
-	
-	
+
+	cd $PROJECTHOME
+
+
+
 	[ $_INF_MSG_ ] && echo "    PROJECTHOME: $PROJECTHOME"
 	[ $_INF_MSG_ ] && echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
 	[ $_INF_MSG_ ] && echo "           PATH: $PATH"
@@ -76,7 +85,7 @@ function __scope__ {
 	
 	return 0
 }
-__scope__ $@; return $?
+__scope__ $@
 
 
 
