@@ -4,8 +4,7 @@
 
 function __scope__ {
 
-	#local _DBG_MSG_=${_DBG_MSG_- }
-	local _DBG_MSG_=${_DBG_MSG_-1}
+	local _DBG_MSG_=${_DBG_MSG_- }
 	local _INF_MSG_=${_INF_MSG_-1}
 	
 	
