@@ -1,2 +1,2 @@
-# projectTemplate - pythonProjectTemplate
-python project template connected with pycharm
+# projectTemplate - pythonProjectTemplate - outSourcingBoard
+pythonProjectTemplate for 'outSourcingBoard' python project

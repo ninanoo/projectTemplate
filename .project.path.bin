@@ -1,1 +1,4 @@
 ./bin
+./lib/glibc-2.14/sbin
+./lib/glibc-2.14/bin
+./build/driver
