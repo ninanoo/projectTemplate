@@ -17,7 +17,7 @@ function __scope__ {
 	then
 		PYTHONHOME=$1
 	else
-		PYTHONHOME=$PYTHONBASE/$(ls $PYTHONBASE | grep -i -e "python-[0-9]\+\.[0-9]\+\.[0-9]\+" | tail -n 1)
+		PYTHONHOME=$PYTHONBASE/Python-current
 	fi
 	
 	if [ ! -d $PYTHONHOME -o ! -x $PYTHONHOME ]

@@ -6,7 +6,8 @@
 !/etc
 !/lib
 !/log
-!/pch
+!/pc
+!/Python-current
 !/LICENSE
 !/README.md
 !/.bashrc.pycharm

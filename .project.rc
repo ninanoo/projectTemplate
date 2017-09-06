@@ -49,6 +49,10 @@ function __scope__ {
 		
 		for _LINE_ in $(cat $_FILE_)
 		do
+			_LINE_=$(echo $_LINE_ | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+
+			[ ! $_LINE_ -o $(expr "$_LINE_" : '\(.\).*') = "#" ] && continue
+
 			LD_LIBRARY_PATH=$(readlink -f $_LINE_)${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
 		done
 	done
@@ -66,6 +70,10 @@ function __scope__ {
 		
 		for _LINE_ in $(cat $_FILE_)
 		do
+			_LINE_=$(echo $_LINE_ | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+
+			[ ! $_LINE_ -o $(expr "$_LINE_" : '\(.\).*') = "#" ] && continue
+
 			PATH=$(readlink -f $_LINE_)${PATH:+:}$PATH
 		done
 	done
