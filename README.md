@@ -1,4 +1,2 @@
-# projectTemplate - pythonProjectTemplate - outSourcingBoard
-pythonProjectTemplate for 'outSourcingBoard' python project
-
-TODO: readlink
+# projectTemplate - pythonProjectTemplate
+python project template connected with pycharm
