@@ -1,5 +1,4 @@
 *
-!/install_all_pythons.sh
 !.project.build.exclude
 !.project.path.lib
 !.project.path.lib.[0-9]*

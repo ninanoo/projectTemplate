@@ -6,15 +6,10 @@
 !/etc
 !/lib
 !/log
-!/pc
 !/www
-!/Python-current
 !/LICENSE
 !/README.md
-!/.bashrc.pycharm
 !/.project.rc
-!/.pycharm_helpers
-!/.python.rc
 !.project.build.exclude
 !.project.path.lib
 !.project.path.lib.[0-9]*
