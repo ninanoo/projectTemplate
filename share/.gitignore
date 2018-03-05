@@ -1,0 +1,9 @@
+*
+!.project.build.exclude
+!.project.path.lib
+!.project.path.lib.[0-9]*
+!.project.path.bin
+!.project.path.bin.[0-9]*
+!.gitignore
+
+!/man

@@ -4,7 +4,7 @@
 
 function __scope__ {
 
-	local _DBG_MSG_=${_DBG_MSG_- }
+	local _DBG_MSG_=${_DBG_MSG_-}
 	local _INF_MSG_=${_INF_MSG_-1}
 	
 	
@@ -25,8 +25,13 @@ function __scope__ {
 	
 	
 	
+	MANPATH=`man -w`
+
+
+
 	[ $_DBG_MSG_ ] && echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
 	[ $_DBG_MSG_ ] && echo "           PATH: $PATH"
+	[ $_DBG_MSG_ ] && echo "        MANPATH: $MANPATH"
 	[ $_DBG_MSG_ ] && echo
 	
 	
@@ -80,17 +85,43 @@ function __scope__ {
 
 	cd $PROJECTHOME
 
+	for _FILE_ in $(
+			  ls -1 $(find $PROJECTHOME -regextype posix-egrep -regex ".*/.project.path.man(.[0-9]+)?") \
+			| sed -e 's/\.project\.path\.man/\*/' \
+			| sort -nt '*' -k2 \
+			| sed -e 's/\*/.project.path.man/'
+		)
+	do
+		cd $(dirname $_FILE_)
+		
+		for _LINE_ in $(cat $_FILE_)
+		do
+			_LINE_=$(echo $_LINE_ | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+
+			[ ! $_LINE_ -o $(expr "$_LINE_" : '\(.\).*') = "#" ] && continue
+
+			MANPATH=$(readlink -f $_LINE_)${MANPATH:+:}$MANPATH
+		done
+	done
+
+	cd $PROJECTHOME
 
 
-	[ $_INF_MSG_ ] && echo "    PROJECTHOME: $PROJECTHOME"
-	[ $_INF_MSG_ ] && echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
-	[ $_INF_MSG_ ] && echo "           PATH: $PATH"
-	[ $_INF_MSG_ ] && echo
+
+	[ $_DBG_MSG_ ] && echo "    PROJECTHOME: $PROJECTHOME"
+	[ $_DBG_MSG_ ] && echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+	[ $_DBG_MSG_ ] && echo "           PATH: $PATH"
+	[ $_DBG_MSG_ ] && echo "        MANPATH: $MANPATH"
+	[ $_DBG_MSG_ ] && echo
 	
 	
 	
-	export PATH LD_LIBRARY_PATH PROJECTHOME
+	export MANPATH PATH LD_LIBRARY_PATH PROJECTHOME
+
+	[ $_INF_MSG_ ] && ./project.sh
 	
+
+
 	return 0
 }
 __scope__ $@
