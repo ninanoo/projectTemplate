@@ -28,6 +28,5 @@
 !/.bashrc.webstorm
 !/home
 !/node-current
-!/node-current-src
 !/node_modules
 !/gulpfile.js
