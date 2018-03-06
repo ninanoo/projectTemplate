@@ -4,6 +4,7 @@
 !/build.sh
 !/deploy
 !/etc
+!/gen.sh
 !/lib
 !/log
 !/share
