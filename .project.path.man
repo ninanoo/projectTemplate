@@ -1,1 +1,3 @@
+./node-current/share/man
+
 ./share/man
