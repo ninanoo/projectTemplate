@@ -1,5 +1,4 @@
 #!/bin/sh
-#set -x
 
 
 
@@ -14,22 +13,26 @@ then
 	exit 1
 fi
 
-#cp -rv $SRC $DST
-#
-#[ $? -ne 0 ] && rm -rfv `find $DST -name ".git"`
-#[ $? -ne 0 ] && rm -rfv `find $DST -name ".gitignore"`
-#[ $? -ne 0 ] && rm -rfv `find $DST -name $GEN`
-#
-#exit $?
+RET=0
 
 cp -rv $SRC $DST
-RET=$?
+RET=$(($RET | $?))
 
 echo
 rm -rfv `find $DST -name ".git"`
+RET=$(($RET | $?))
 echo
 rm -rfv `find $DST -name ".gitignore"`
+RET=$(($RET | $?))
 echo
+rm -rfv `find $DST -name "LICENSE"`
+RET=$(($RET | $?))
+rm -rfv `find $DST -name "README.md"`
+RET=$(($RET | $?))
 rm -rfv `find $DST -name $GEN`
+RET=$(($RET | $?))
+
+echo
+echo "result: $RET"
 
 exit $RET
