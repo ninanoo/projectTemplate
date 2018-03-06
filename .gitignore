@@ -21,3 +21,12 @@
 !.project.path.man
 !.project.path.man.[0-9]*
 !.gitignore
+
+!/.nodejs.rc
+!/.webstorm_nodejs_helpers
+!/.bashrc.webstorm
+!/home
+!/node-current
+!/node-current-src
+!/node_modules
+!/gulpfile.js
