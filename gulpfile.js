@@ -26,14 +26,16 @@ var paths = {
 		src: [
 			'deploy/**/*',
 			'deploy/**/.*',
-//			'deploy/*',
-//			'deploy/subpath/*',
 			
 			'!deploy/package.json',
 			'!deploy/*.sh',
 			
+			'!deploy/.git',
 			'!deploy/.gitignore',
 			'!deploy/.project.build.exclude',
+			'!deploy/.project.path.bin',
+			'!deploy/.project.path.lib',
+			'!deploy/.project.path.man',
 		],
 		dest: 'build',
 	},
